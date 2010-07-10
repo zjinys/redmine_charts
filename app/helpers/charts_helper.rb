@@ -1,0 +1,3 @@
+module ChartsHelper
+
+end
