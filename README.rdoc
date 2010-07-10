@@ -1,3 +1,13 @@
-= charts
+=Redmine charts plugin
 
-Description goes here
+0. Test under redmien git version.
+
+1. Install mattetti-googlecharts.
+    gem sources -a http://gems.github.com/
+    sudo gem install mattetti-googlecharts
+2. Check out redmine_charts source code to redmine/vendor/plugins
+    git clone git@github.com:zjinys/redmine_charts.git $REDMINE_HOME/vendor/plugins
+
+3. I'am a newbie to rails , so it's heave used active_record's find_by_sql method.I'll change this in next version.
+4. It's only test under mysql now.
+5. Advice are welcome.
