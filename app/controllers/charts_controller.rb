@@ -103,7 +103,6 @@ class ChartsController < ApplicationController
       tmp = []
 
       data.each_key { |key|
-        p key 
         tmp << data[key].to_i
       }
       ret_val << tmp
