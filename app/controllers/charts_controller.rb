@@ -2,18 +2,17 @@ require 'gchart'
 class ChartsController < ApplicationController
   unloadable
 
-
+  
   def index
     @project = Project.find(params[:project_id])
     due = params[:due].to_i
-    colors = ['FF0000','00FF00','FF9994','000000','EEEEEE','CCCCCC','76A4FB']
-
+    @chart_dev = create_issue_day_resolved_status_chart(due,@project.id)
 
     issueinfo = issue_day_create_status(due,@project.id)
     @issue_day_create_status =
             Gchart.line(:title => "Last 7 day issue by reportor",
                     :theme => :greyscale,
-                    :size => '800x200',
+                    :size => '700x200',
                     :data => issueinfo[0],
                     :legend => issueinfo[1],
                     :axis_labels => issueinfo[2],
@@ -37,7 +36,7 @@ class ChartsController < ApplicationController
                     :size => '400x200',
                     :data => issueinfo[0],
                     :labels=> issueinfo[1],
-                    :title => 'Unresovled bugs'
+                    :title => 'Unresolved bugs'
             )
 
     issueinfo = issue_create_today(due, @project.id)
@@ -54,6 +53,96 @@ class ChartsController < ApplicationController
 
 
   private
+  def create_issue_day_resolved_status_chart(due, project_id)
+    issues = Issue.find_by_sql [
+              "select i.assigned_to_id,count(1) as c, concat(u.firstname,u.lastname) as name from issues i,users u where i.assigned_to_id = u.id and i.status_id in (1,2,4,7) and i.project_id = ? group by i.assigned_to_id,name",project_id
+            ]
+    charts = []
+    issues.each do |i|
+      if i.c.to_i > 0
+        issuesinfos = issue_day_resolved_status(i.assigned_to_id.to_i,due,project_id)
+        charts <<
+            Gchart.line(:title => "Last 7 day issue by resolved by " + i.name,
+                    :theme => :greyscale,
+                    :size => '550x200',
+                    :data => issuesinfos[0],
+                    :axis_labels => issuesinfos[1],
+                    :axis_with_labels => 'x'
+            )
+      end
+    end
+    charts
+  end
+
+  def issue_day_resolved_status(user_id, due, project_id)
+    if due == 0
+      due = 7
+    end
+    axis_labels = []
+    x_labels = []
+
+    t = Time.now()
+    axis_labels << t.strftime('%Y-%m-%d')
+    x_labels << t.strftime('%m-%d')
+
+    step = 24 * 60 * 60
+    (1..due).each do |d|
+      t1 = t - d * step
+      axis_labels << t1.strftime('%Y-%m-%d')
+      x_labels << t1.strftime('%m-%d')
+    end
+
+
+
+    issues = Issue.find_by_sql [
+                "select count(1) c,CONCAT(u.firstname,u.lastname) name,DATE_FORMAT(j.created_on,'%Y-%m-%d') create_date from " +
+                "    journals j, " +
+                "    journal_details jd, " +
+                "    issues i , " +
+                "    users u " +
+                "where  " +
+                "    i.assigned_to_id = u.id " +
+                "and " +
+                "    i.assigned_to_id = ? " +
+                "and " +
+                "    i.id = j.journalized_id " +
+                "and " +
+                "    j.journalized_type = 'issue' " +
+                "and " +
+                "    j.id = jd.journal_id " +
+                "and " +
+                "    jd.old_value = 3 " +
+                "and  " +
+                "    jd.value = 5 " +
+                "and  " +
+                "    i.project_id = ? " +
+                "and " +
+                "    to_days(now()) - to_days(j.created_on) <= ? " +
+                "group by name,create_date ",
+                user_id,project_id,due
+             ]
+    data = Hash.new
+    axis_labels.each do |al|
+      data.store(al,0)
+    end
+
+    issues.each do|i|
+        data[i.create_date] =i.c
+    end
+
+    p data
+    tmp = []
+    data.sort.each do |d|
+      tmp << d[1].to_i
+    end
+
+    x_labels_arr = []
+    x_labels_arr << x_labels.reverse * '|'
+
+
+
+    [tmp,x_labels_arr]
+  end
 
   def issue_day_create_status(due, project_id)
     if due == 0

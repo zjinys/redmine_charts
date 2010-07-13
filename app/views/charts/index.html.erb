@@ -1,7 +1,3 @@
-<div>
-	<img src="<%=@issue_by_creator%>"></img>
-	<img src=<%= @issue_create_today %>></img>
-	<img src=<%= @issue_by_assigner%>></img>
+<h2>Bug Charts</h2>
 
-    <img src="<%= @issue_day_create_status %>"></img>
-</div>
+<%= render_tabs charts_tabs %>
