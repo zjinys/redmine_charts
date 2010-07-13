@@ -130,7 +130,6 @@ class ChartsController < ApplicationController
         data[i.create_date] =i.c
     end
 
-    p data
     tmp = []
     data.sort.each do |d|
       tmp << d[1].to_i
