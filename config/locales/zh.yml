@@ -1,0 +1,5 @@
+# English strings go here for Rails i18n
+zh:
+  my_label: "My label"
+  label_index: 综合情况
+  label_dev: 开发解决进度
