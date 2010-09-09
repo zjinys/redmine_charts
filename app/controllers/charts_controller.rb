@@ -50,14 +50,49 @@ class ChartsController < ApplicationController
             )
     @test_stat_today = test_stat(@project.id,0)
     @test_stat_yestoday = test_stat(@project.id,1)
+
+    @issue_stat_today = issue_run_stat(@project.id,0)
+    @issue_stat_yestoday = issue_run_stat(@project.id,1)
+
+    @issue_status_today = issue_status_stat(@project.id,0)
+    @issue_status_yestoday= issue_status_stat(@project.id,1)
   end
 
 
   private
+  def issue_status_stat(project_id,due)
+    all = []
+    users = User.find_by_sql ['select m.user_id n,concat(u.firstname,u.lastname) u from roles r ,member_roles mr,members m ,users u where m.user_id = u.id and m.id = mr.member_id and r.id = mr.role_id and r.id =5  and m.project_id =?',project_id]
+    users.each do |u|
 
+      created = Issue.find_by_sql ['select id from issues where to_days(now()) - to_days(created_on)=? and author_id=? and tracker_id in (1,2,3) and project_id=?',due,u.n,project_id]
+      reopened = Issue.find_by_sql ['select id from issues where to_days(now()) - to_days(updated_on)=? and status_id = 4 and author_id =? and tracker_id in (1,2,3) and project_id =?',due,u.n,project_id]
+      closed = Issue.find_by_sql ['select id from issues where to_days(now()) - to_days(updated_on)=? and status_id = 5 and author_id =? and tracker_id in (1,2,3) and project_id =?',due,u.n,project_id]
+
+      all << [u.u,created.length,reopened.length,closed.length]
+    end
+    all
+  end
+  def issue_run_stat(project_id,due)
+    all = []
+    users = User.find_by_sql ['select m.user_id n,concat(u.firstname,u.lastname) u from roles r ,member_roles mr,members m ,users u where m.user_id = u.id and m.id = mr.member_id and r.id = mr.role_id and r.id =5  and m.project_id =?',project_id]
+    users.each do |u|
+      total = 0
+      runned = 0
+      issues = Issue.find_by_sql ['select count(1) c, i.status_id s from issues i where i.project_id =? and i.tracker_id = 9 and  to_days(now()) - to_days(i.due_date) =? and i.assigned_to_id =? group by i.status_id',project_id,due,u.n]
+      issues.each do |i|
+        total += i.c.to_i
+        if i.s.to_i == 5
+          runned = i.c.to_i
+        end
+      end
+      all << [u.u,total,total.to_i - runned.to_i]
+    end
+    all
+  end
   def test_stat(project_id,due)
     all = []
-    users = User.find_by_sql ['select distinct(t.author_id) n ,concat(u.firstname,u.lastname) u from tests t, users u,testcases tc where t.author_id = u.id and t.testcase_id = tc.id and tc.project_id =? and to_days(now()) - to_days(t.updated_at) =?',project_id,due]
+    users = User.find_by_sql ['select m.user_id n,concat(u.firstname,u.lastname) u from roles r ,member_roles mr,members m,users u where m.user_id = u.id and m.id = mr.member_id and r.id = mr.role_id and r.id =5  and m.project_id =?',project_id]
     users.each do |u|
       total = 0
       runned = 0

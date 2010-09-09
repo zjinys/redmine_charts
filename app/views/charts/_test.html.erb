@@ -1,4 +1,5 @@
-<div>
+<div class="splitcontentleft">
+  <div class="testcase_run">
   <h2>测试例执行情况</h2>
   <table border="1" width="400">
     <thead>
@@ -44,6 +45,97 @@
     <% end %>
     </tbody>
   </table>
+    </div>
 </div>
+<br/><br/>
+  <div class="splitcontentright">
+    <div class="testcase_edit">
+      <h2>测试例编写情况</h2>
+      <table border="1" width="500">
+        <thead>
+        <th>测试人员</th>
+        <th>测试用例编写任务数量</th>
+        <th>未完成的测试用例编写任务数量</th>
+        </thead>
+        <tbody>
+        <tr>
+          <td colspan="3">今日情况</td>
+        </tr>
+        <% @issue_stat_today.each do |t| %>
+            <tr
+            <% if t[2].to_i > 0 %>
+            bgcolor="red"
+            <% end %>
+            >
+              <% t.each do |e| %>
+                  <td align="center">
+                    <%= e %>
+                  </td>
+              <% end %>
+
+            </tr>
+        <% end %>
+        <tr>
+          <td colspan="3">
+            昨日情况
+          </td>
+        </tr>
+        <% @issue_stat_yestoday.each do |t| %>
+            <tr
+            <% if t[2].to_i > 0 %>
+            bgcolor="red"
+            <% end %>
+            >
+              <% t.each do |e| %>
+                  <td align="center">
+                    <%= e %>
+                  </td>
+              <% end %>
+            </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="total_work">
+      <h2>Bug情况</h2>
+      <table border="1" width="500">
+        <thead>
+        <th>测试人员</th>
+        <th>新建Bug数</th>
+        <th>重开Bug数</th>
+        <th>关闭Bug数</th>
+        </thead>
+        <tbody>
+        <tr>
+          <td colspan="4">今日情况</td>
+        </tr>
+        <% @issue_status_today.each do |t| %>
+            <tr>
+              <% t.each do |e| %>
+                  <td align="center">
+                    <%= e %>
+                  </td>
+              <% end %>
+            </tr>
+        <% end %>
+        <tr>
+          <td colspan="4">
+            昨日情况
+          </td>
+        </tr>
+        <% @issue_status_yestoday.each do |t| %>
+            <tr>
+              <% t.each do |e| %>
+                  <td align="center">
+                    <%= e %>
+                  </td>
+              <% end %>
+            </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 
 
