@@ -1,20 +1,27 @@
-<table>
-  <thead>
-    <th>姓名</th>
-    <th>任务数量</th>
-    <th>完成数量</th>
-  </thead>
-  <tbody>
+<div>
+  <h2>测试例执行情况</h2>
+  <table border="1" width="300">
+    <thead>
+    <th>测试者</th>
+    <th>分配任务数量</th>
+    <th>未完成数量</th>
+    </thead>
+    <tbody>
     <tr>
       <td colspan="3">今日情况</td>
     </tr>
-    <% @test_stat_today.each do |t|%>
-        <tr>
+    <% @test_stat_today.each do |t| %>
+        <tr
+        <% if t[2].to_i > 0 %>
+        bgcolor="red"
+        <% end %>
+        >
           <% t.each do |e| %>
-          <td>
-            <%=e%>
-          </td>
-          <%end%>
+              <td>
+                <%= e %>
+              </td>
+          <% end %>
+
         </tr>
     <% end %>
     <tr>
@@ -22,16 +29,21 @@
         昨日情况
       </td>
     </tr>
-    <% @test_stat_yestoday.each do |t|%>
-        <tr>
+    <% @test_stat_yestoday.each do |t| %>
+        <tr
+        <% if t[2].to_i > 0 %>
+        bgcolor="red"
+        <% end %>
+        >
           <% t.each do |e| %>
-          <td>
-            <%=e%>
-          </td>
-          <%end%>
+              <td>
+                <%= e %>
+              </td>
+          <% end %>
         </tr>
     <% end %>
-  </tbody>
-</table>
+    </tbody>
+  </table>
+</div>
 
 
