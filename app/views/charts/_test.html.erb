@@ -1,10 +1,10 @@
 <div>
   <h2>测试例执行情况</h2>
-  <table border="1" width="300">
+  <table border="1" width="400">
     <thead>
-    <th>测试者</th>
-    <th>分配任务数量</th>
-    <th>未完成数量</th>
+    <th>测试人员</th>
+    <th>分配测试用例数量</th>
+    <th>未执行测试用例数量</th>
     </thead>
     <tbody>
     <tr>
@@ -17,7 +17,7 @@
         <% end %>
         >
           <% t.each do |e| %>
-              <td>
+              <td align="center">
                 <%= e %>
               </td>
           <% end %>
@@ -36,7 +36,7 @@
         <% end %>
         >
           <% t.each do |e| %>
-              <td>
+              <td align="center">
                 <%= e %>
               </td>
           <% end %>
