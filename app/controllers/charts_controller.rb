@@ -56,11 +56,11 @@ class ChartsController < ApplicationController
 
   def test_stat(project_id)
     all = []
-    users = User.find_by_sql ['select distinct(t.author_id) n ,concat(u.firstname,u.lastname) u from tests t, users u,testcases tc where t.author_id = u.id and t.testcase_id = tc.id and tc.project_id =? and to_days(now()) - to_days(t.updated_at) = 3',project_id]
+    users = User.find_by_sql ['select distinct(t.author_id) n ,concat(u.firstname,u.lastname) u from tests t, users u,testcases tc where t.author_id = u.id and t.testcase_id = tc.id and tc.project_id =? and to_days(now()) - to_days(t.updated_at) = 0',project_id]
     users.each do |u|
       total = 0
       runned = 0
-      issues = Issue.find_by_sql ['select count(1) c,t.status from tests t,users u,testcases tc where t.author_id = u.id and t.testcase_id = tc.id and tc.project_id =? and to_days(now()) - to_days(t.updated_at) = 3 and t.author_id =? group by t.status',project_id,u.n]
+      issues = Issue.find_by_sql ['select count(1) c,t.status from tests t,users u,testcases tc where t.author_id = u.id and t.testcase_id = tc.id and tc.project_id =? and to_days(now()) - to_days(t.updated_at) = 0 and t.author_id =? group by t.status',project_id,u.n]
       issues.each do |i|
         total += i.c.to_i
         if i.status == '10'
