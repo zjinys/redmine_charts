@@ -5,7 +5,24 @@
     <th>完成数量</th>
   </thead>
   <tbody>
-    <% @test_stat.each do |t|%>
+    <tr>
+      <td colspan="3">今日情况</td>
+    </tr>
+    <% @test_stat_today.each do |t|%>
+        <tr>
+          <% t.each do |e| %>
+          <td>
+            <%=e%>
+          </td>
+          <%end%>
+        </tr>
+    <% end %>
+    <tr>
+      <td colspan="3">
+        昨日情况
+      </td>
+    </tr>
+    <% @test_stat_yestoday.each do |t|%>
         <tr>
           <% t.each do |e| %>
           <td>
@@ -16,3 +33,5 @@
     <% end %>
   </tbody>
 </table>
+
+

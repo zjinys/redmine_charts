@@ -48,19 +48,20 @@ class ChartsController < ApplicationController
                     :labels=> issueinfo[1],
                     :title => 'Today reported'
             )
-    @test_stat = test_stat(@project.id)
+    @test_stat_today = test_stat(@project.id,0)
+    @test_stat_yestoday = test_stat(@project.id,1)
   end
 
 
   private
 
-  def test_stat(project_id)
+  def test_stat(due,project_id)
     all = []
-    users = User.find_by_sql ['select distinct(t.author_id) n ,concat(u.firstname,u.lastname) u from tests t, users u,testcases tc where t.author_id = u.id and t.testcase_id = tc.id and tc.project_id =? and to_days(now()) - to_days(t.updated_at) = 0',project_id]
+    users = User.find_by_sql ['select distinct(t.author_id) n ,concat(u.firstname,u.lastname) u from tests t, users u,testcases tc where t.author_id = u.id and t.testcase_id = tc.id and tc.project_id =? and to_days(now()) - to_days(t.updated_at) =?',project_id,due]
     users.each do |u|
       total = 0
       runned = 0
-      issues = Issue.find_by_sql ['select count(1) c,t.status from tests t,users u,testcases tc where t.author_id = u.id and t.testcase_id = tc.id and tc.project_id =? and to_days(now()) - to_days(t.updated_at) = 0 and t.author_id =? group by t.status',project_id,u.n]
+      issues = Issue.find_by_sql ['select count(1) c,t.status from tests t,users u,testcases tc where t.author_id = u.id and t.testcase_id = tc.id and tc.project_id =? and to_days(now()) - to_days(t.updated_at) =? and t.author_id =? group by t.status',project_id,due,u.n]
       issues.each do |i|
         total += i.c.to_i
         if i.status == '10'
