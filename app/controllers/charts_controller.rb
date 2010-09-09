@@ -63,13 +63,9 @@ class ChartsController < ApplicationController
       runned = 0
       issues = Issue.find_by_sql ['select count(1) c,t.status s from tests t,users u,testcases tc where t.author_id = u.id and t.testcase_id = tc.id and tc.project_id =? and to_days(now()) - to_days(t.updated_at) =? and t.author_id =? group by t.status',project_id,due,u.n]
       issues.each do |i|
-        p "status => #{i.s}"
         total += i.c.to_i
         if i.s.to_i == 10
-          p 'hello'
           runned = i.c.to_i
-        else
-          p "world #{i.s}"
         end
       end
       all << [u.u,total,runned]
